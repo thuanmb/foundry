@@ -1,0 +1,34 @@
+# Production environment overrides
+
+replicaCount: 2
+
+springProfilesActive: "prod"
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPU: 70
+
+ingress:
+  enabled: true
+  host: api.example.com
+  tls: true
+  tlsSecretName: foundry-tls
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+postgresql:
+  primary:
+    persistence:
+      size: 10Gi

@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Semantic color tokens as RGB channels so Tailwind opacity modifiers work. */
+@layer base {
+    :root {
+        --color-primary: 79 70 229;
+        --color-primary-hover: 67 56 202;
+        --color-on-primary: 255 255 255;
+        --color-background: 248 250 252;
+        --color-surface: 255 255 255;
+        --color-on-surface: 15 23 42;
+        --color-muted: 100 116 139;
+        --color-border: 226 232 240;
+        --color-error: 220 38 38;
+        --color-success: 22 163 74;
+        color-scheme: light;
+    }
+
+    .dark {
+        --color-primary: 129 140 248;
+        --color-primary-hover: 165 180 252;
+        --color-on-primary: 15 23 42;
+        --color-background: 2 6 23;
+        --color-surface: 15 23 42;
+        --color-on-surface: 226 232 240;
+        --color-muted: 148 163 184;
+        --color-border: 51 65 85;
+        --color-error: 248 113 113;
+        --color-success: 74 222 128;
+        color-scheme: dark;
+    }
+
+    body {
+        @apply bg-background text-on-surface font-sans antialiased;
+    }
+}

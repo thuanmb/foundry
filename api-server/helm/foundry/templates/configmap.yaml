@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-app-config
+  labels:
+    {{- include "foundry.labels" . | nindent 4 }}
+data:
+  application-override.properties: |
+{{- with .Values.config }}
+{{- with .auth }}
+    auth.access-token.ttl-minutes={{ .accessToken.ttlMinutes }}
+    auth.access-token.issuer={{ .accessToken.issuer }}
+    auth.refresh-token.ttl-days={{ .refreshToken.ttlDays }}
+    auth.refresh-token.max-per-user={{ .refreshToken.maxPerUser }}
+    auth.otp.length={{ .otp.length }}
+    auth.otp.expiry-minutes={{ .otp.expiryMinutes }}
+    auth.otp.max-attempts={{ .otp.maxAttempts }}
+    auth.otp.rate-limit-per-hour={{ .otp.rateLimitPerHour }}
+    auth.otp.cooldown-sec={{ .otp.cooldownSec }}
+    auth.jwe.ttl-hours={{ .jwe.ttlHours }}
+    auth.jwe.algorithm={{ .jwe.algorithm }}
+{{- end }}
+{{- with .turnstile }}
+    turnstile.verify-url={{ .verifyUrl }}
+    turnstile.timeout-sec={{ .timeoutSec }}
+{{- end }}
+{{- with .sms }}
+    sms.provider={{ .provider }}
+{{- end }}
+    attestation.ios-app-id={{ $.Values.attestation.iosAppId }}
+    attestation.ios-environment={{ $.Values.attestation.iosEnvironment }}
+    attestation.android-package-name={{ $.Values.attestation.androidPackageName }}
+{{- with .attestation }}
+    attestation.bypass-enabled={{ .bypassEnabled }}
+{{- end }}
+{{- with .worker }}
+    worker.job.max-retries={{ .job.maxRetries }}
+    worker.job.heartbeat-interval-sec={{ .job.heartbeatIntervalSec }}
+    worker.job.stale-timeout-minutes={{ .job.staleTimeoutMinutes }}
+    worker.job.stale-check-interval-sec={{ .job.staleCheckIntervalSec }}
+    worker.job.graceful-shutdown-threshold-sec={{ .job.gracefulShutdownThresholdSec }}
+    worker.listen.channel={{ .listen.channel }}
+    worker.listen.complete-channel={{ .listen.completeChannel }}
+    worker.listen.fallback-poll-sec={{ .listen.fallbackPollSec }}
+{{- end }}
+{{- with .cache }}
+    cache.caffeine.features-ttl-sec={{ .caffeine.featuresTtlSec }}
+    cache.caffeine.mobile-config-ttl-sec={{ .caffeine.mobileConfigTtlSec }}
+    cache.caffeine.max-entries={{ .caffeine.maxEntries }}
+{{- end }}
+{{- with .security }}
+    security.rate-limit.public-endpoints-per-sec={{ .rateLimit.publicEndpointsPerSec }}
+    security.rate-limit.auth-endpoints-per-min={{ .rateLimit.authEndpointsPerMin }}
+    security.request.max-body-size-mb={{ .request.maxBodySizeMb }}
+    security.cors.allowed-origins={{ .cors.allowedOrigins }}
+    security.cors.max-age-sec={{ .cors.maxAgeSec }}
+{{- end }}
+{{- with .sse }}
+    sse.heartbeat-interval-sec={{ .heartbeatIntervalSec }}
+    sse.connection-timeout-sec={{ .connectionTimeoutSec }}
+{{- end }}
+{{- with .polling }}
+    polling.initial-delay-sec={{ .initialDelaySec }}
+    polling.max-delay-sec={{ .maxDelaySec }}
+    polling.backoff-multiplier={{ .backoffMultiplier }}
+{{- end }}
+{{- range $key, $flag := .featureFlags }}
+    feature.flags.{{ $key }}.enabled={{ $flag.enabled }}
+{{- end }}
+{{- with .account }}
+    account.deletion.grace-period-days={{ .deletion.gracePeriodDays }}
+    account.deletion.anonymize-on-delete={{ .deletion.anonymizeOnDelete }}
+    account.retention.inactive-days={{ .retention.inactiveDays }}
+{{- end }}
+{{- with .app }}
+    app.mobile.min-version={{ .mobile.minVersion }}
+    app.mobile.latest-version={{ .mobile.latestVersion }}
+{{- end }}
+{{- end }}

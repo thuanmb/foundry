@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "foundry-worker.fullname" . }}-app-config
+  labels:
+    {{- include "foundry-worker.labels" . | nindent 4 }}
+data:
+  application-override.properties: |
+    worker.job.max-retries={{ .Values.worker.job.maxRetries }}
+    worker.job.heartbeat-interval-sec={{ .Values.worker.job.heartbeatIntervalSec }}
+    worker.job.stale-timeout-minutes={{ .Values.worker.job.staleTimeoutMinutes }}
+    worker.job.stale-check-interval-sec={{ .Values.worker.job.staleCheckIntervalSec }}
+    worker.job.graceful-shutdown-threshold-sec={{ .Values.worker.job.gracefulShutdownThresholdSec }}
+    worker.listen.channel={{ .Values.worker.listen.channel }}
+    worker.listen.complete-channel={{ .Values.worker.listen.completeChannel }}
+    worker.listen.fallback-poll-sec={{ .Values.worker.listen.fallbackPollSec }}
+    worker.llm.model={{ .Values.worker.llm.model }}
+    worker.llm.timeout-sec={{ .Values.worker.llm.timeoutSec }}
+    worker.llm.max-tokens={{ .Values.worker.llm.maxTokens }}
+    worker.llm.temperature={{ .Values.worker.llm.temperature }}
+    worker.echo.llm-enabled={{ .Values.worker.echo.llmEnabled }}
+    worker.echo.max-delay-sec={{ .Values.worker.echo.maxDelaySec }}
+    openai.base-url={{ .Values.openai.baseUrl }}

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: foundry
+description: A Helm chart for Foundry Java API service
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - name: postgresql
+    version: 12.5.7
+    repository: https://charts.bitnami.com/bitnami

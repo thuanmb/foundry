@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "foundry-worker.fullname" . }}
+  labels:
+    {{- include "foundry-worker.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "foundry-worker.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "foundry-worker.selectorLabels" . | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default 45 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: http
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://{{ .Values.postgresql.auth.host | default (printf "%s-postgresql" .Release.Name) }}:5432/{{ .Values.postgresql.auth.database }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "{{ .Values.postgresql.auth.username }}"
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "foundry-worker.fullname" . }}-secret
+                  key: db-password
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "foundry-worker.fullname" . }}-secret
+                  key: openai-api-key
+            - name: SERVER_PORT
+              value: "{{ .Values.service.port }}"
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: optional:/config/application-override.properties
+          volumeMounts:
+            - name: {{ include "foundry-worker.fullname" . }}-config-vol
+              mountPath: /etc/opt/foundry/config
+            - name: {{ include "foundry-worker.fullname" . }}-app-config-vol
+              mountPath: /config
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.service.port }}
+            periodSeconds: 15
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.service.port }}
+            periodSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: {{ include "foundry-worker.fullname" . }}-config-vol
+          configMap:
+            name: {{ include "foundry-worker.fullname" . }}-config
+        - name: {{ include "foundry-worker.fullname" . }}-app-config-vol
+          configMap:
+            name: {{ include "foundry-worker.fullname" . }}-app-config

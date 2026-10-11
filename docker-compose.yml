@@ -1,0 +1,110 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: foundry-db
+    environment:
+      POSTGRES_DB: foundry
+      POSTGRES_USER: foundry_app
+      POSTGRES_PASSWORD: foundry_local_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U foundry_app -d foundry" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: foundry-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - "5050:5050"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - tools
+
+  # --------------------------------------------------------------------------
+  # Containerized API server (no local Java required)
+  # Usage: docker compose --profile app up -d
+  # --------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: foundry-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/foundry
+      SPRING_DATASOURCE_USERNAME: foundry_app
+      SPRING_DATASOURCE_PASSWORD: foundry_local_pass
+      AUTH_JWE_SECRET_KEY: ${AUTH_JWE_SECRET_KEY:-dev-jwe-secret-key-min-32-chars!!}
+      AUTH_JWT_SECRET_KEY: ${AUTH_JWT_SECRET_KEY:-dev-jwt-secret-key-must-be-at-least-64-characters-long-for-hmac-sha512!!}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}
+      IOS_APP_ID: ${IOS_APP_ID:-com.thuanbui.foundry}
+      IOS_ATTEST_ENVIRONMENT: ${IOS_ATTEST_ENVIRONMENT:-development}
+      ANDROID_PACKAGE_NAME: ${ANDROID_PACKAGE_NAME:-com.thuanbui.foundry}
+      PLAY_INTEGRITY_DECRYPTION_KEY: ${PLAY_INTEGRITY_DECRYPTION_KEY:-}
+      PLAY_INTEGRITY_VERIFICATION_KEY: ${PLAY_INTEGRITY_VERIFICATION_KEY:-}
+      ATTESTATION_BYPASS_ENABLED: ${ATTESTATION_BYPASS_ENABLED:-true}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - app
+
+  # Async job worker (schema is migrated by the api service on startup)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: foundry-worker
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/foundry
+      DB_USERNAME: foundry_app
+      DB_PASSWORD: foundry_local_pass
+      LOGGING_FILE_PATH: /tmp
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ECHO_LLM_ENABLED: ${ECHO_LLM_ENABLED:-false}
+    ports:
+      - "8081:8081"
+    depends_on:
+      api:
+        condition: service_started
+    restart: on-failure
+    profiles:
+      - app
+
+  # --------------------------------------------------------------------------
+  # Run API server tests in container (no local Java required)
+  # Usage: make docker-test-api
+  # --------------------------------------------------------------------------
+  api-test:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: foundry-api-test
+    working_dir: /app
+    volumes:
+      - .:/app
+      - maven-cache:/root/.m2
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/foundry
+      SPRING_DATASOURCE_USERNAME: foundry_app
+      SPRING_DATASOURCE_PASSWORD: foundry_local_pass
+    command: mvn -pl common,api-server test
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - test
+
+volumes:
+  pgdata:
+  maven-cache:

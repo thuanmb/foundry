@@ -1,0 +1,28 @@
+# Development environment overrides
+
+replicaCount: 1
+
+javaOpts: "-Xmx512m"
+
+config:
+  attestation:
+    bypassEnabled: true
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "100m"
+  limits:
+    memory: "768Mi"
+    cpu: "500m"
+
+autoscaling:
+  enabled: false
+
+ingress:
+  enabled: false
+
+postgresql:
+  primary:
+    persistence:
+      size: 1Gi

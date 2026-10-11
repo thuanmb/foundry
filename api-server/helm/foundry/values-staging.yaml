@@ -1,0 +1,27 @@
+# Staging environment overrides
+
+replicaCount: 2
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 3
+  targetCPU: 70
+
+ingress:
+  enabled: true
+  host: api-staging.example.com
+  tls: true
+  tlsSecretName: foundry-staging-tls
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

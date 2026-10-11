@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-server
+  labels:
+    {{- include "foundry.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "foundry.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "foundry.labels" . | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: foundry-api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          env:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://{{ .Values.postgresql.auth.host | default (printf "%s-postgresql" .Release.Name) }}:5432/{{ .Values.postgresql.auth.database }}
+          - name: SPRING_DATASOURCE_USERNAME
+            value: {{ .Values.postgresql.auth.username }}
+          - name: SPRING_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgresql
+                key: password
+          - name: AUTH_JWE_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: jwe-secret-key
+          - name: AUTH_JWT_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: jwt-secret-key
+          - name: TURNSTILE_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: turnstile-secret-key
+          - name: FIREBASE_WEB_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: firebase-web-api-key
+          - name: TWILIO_ACCOUNT_SID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: twilio-account-sid
+          - name: TWILIO_AUTH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: twilio-auth-token
+          - name: TWILIO_FROM_NUMBER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: twilio-from-number
+          - name: IOS_APP_ID
+            value: {{ .Values.attestation.iosAppId | quote }}
+          - name: IOS_ATTEST_ENVIRONMENT
+            value: {{ .Values.attestation.iosEnvironment | quote }}
+          - name: ANDROID_PACKAGE_NAME
+            value: {{ .Values.attestation.androidPackageName | quote }}
+          - name: PLAY_INTEGRITY_DECRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: play-integrity-decryption-key
+          - name: PLAY_INTEGRITY_VERIFICATION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: play-integrity-verification-key
+          - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+            value: optional:/config/application-override.properties
+          - name: JAVA_TOOL_OPTIONS
+            value: {{ .Values.javaOpts | default "-Xmx512m" | quote }}
+          - name: SPRING_PROFILES_ACTIVE
+            value: {{ .Values.springProfilesActive | default "" | quote }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: http
+          volumeMounts:
+            - name: app-config-vol
+              mountPath: /config
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.service.port }}
+            periodSeconds: 15
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.service.port }}
+            periodSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: app-config-vol
+          configMap:
+            name: {{ .Release.Name }}-app-config

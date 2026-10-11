@@ -1,0 +1,13 @@
+target/
+.idea/
+*.iml
+*.log
+*.swp
+*.swo
+*.bak
+.DS_Store
+.git
+.gitignore
+README.md
+docker-compose.yml
+.env

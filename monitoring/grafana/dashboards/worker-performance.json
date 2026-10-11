@@ -1,0 +1,72 @@
+{
+  "uid": "foundry-worker-performance",
+  "title": "Foundry — Worker Performance",
+  "tags": ["foundry", "worker"],
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "timezone": "browser",
+  "templating": {
+    "list": [
+      { "name": "DS_PROMETHEUS", "type": "datasource", "query": "prometheus", "label": "Prometheus" }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Queue depth",
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "targets": [ { "expr": "worker_jobs_queue_depth", "refId": "A" } ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Jobs recovered (1h)",
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "targets": [ { "expr": "sum(increase(worker_jobs_recovered_total[1h]))", "refId": "A" } ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Jobs processed by status",
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [ { "expr": "sum(rate(worker_jobs_processed_total[5m])) by (status)", "legendFormat": "{{status}}", "refId": "A" } ],
+      "fieldConfig": { "defaults": { "unit": "ops" } }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Job duration (p50/p95)",
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(worker_job_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p50", "refId": "A" },
+        { "expr": "histogram_quantile(0.95, sum(rate(worker_job_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95", "refId": "B" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "LLM tokens by type (cost proxy)",
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [ { "expr": "sum(rate(worker_llm_tokens_total[5m])) by (type)", "legendFormat": "{{type}}", "refId": "A" } ],
+      "fieldConfig": { "defaults": { "unit": "tokps" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "LLM latency (p95)",
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [ { "expr": "histogram_quantile(0.95, sum(rate(worker_llm_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95", "refId": "A" } ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+# ==============================================================================
+# Foundry — Bitbucket Pipelines CI/CD
+# Stages: Test (parallel) → Build & Push (parallel) → Deploy staging → Deploy prod
+# ==============================================================================
+#
+# Integration tests use Testcontainers (PostgreSQL), so backend/worker test steps
+# require the `docker` service rather than a dedicated postgres service container.
+#
+# Required Bitbucket repository variables:
+#   REGISTRY                Docker registry URL (e.g. registry.example.com/namespace)
+#   DOCKER_USERNAME         Registry username
+#   DOCKER_PASSWORD         Registry password
+#   AUTH_JWE_SECRET_KEY     JWE encryption key
+#   AUTH_JWT_SECRET_KEY     JWT signing key
+#   OPENAI_API_KEY          OpenAI API key (optional; worker LLM calls)
+#   TURNSTILE_SECRET_KEY    Cloudflare Turnstile secret
+#   FIREBASE_WEB_API_KEY    Firebase web API key
+#   DB_USERNAME             PostgreSQL app username
+#   DB_PASSWORD             PostgreSQL app password
+#   DB_NAME                 PostgreSQL app database name
+#   WEB_API_URL             Web app API base URL (e.g. https://api.example.com/api/v1)
+#   TURNSTILE_SITE_KEY      Cloudflare Turnstile site key (web build)
+#
+# Required Bitbucket deployment environments: staging, production.
+# Deployment-environment variables (defined per environment, NOT repository-wide):
+#   KUBECONFIG              Base64-encoded kubeconfig for that environment's cluster
+#   NAMESPACE               Kubernetes namespace to deploy into
+#                           (e.g. foundry-staging / foundry-production)
+
+image: maven:3.9-eclipse-temurin-21
+
+definitions:
+  caches:
+    maven: ~/.m2/repository
+    npm: ~/.npm
+
+  steps:
+    - step: &test-api
+        name: Test API Server
+        caches: [maven]
+        services: [docker]
+        size: 2x
+        script:
+          - mvn -B clean verify -pl api-server -am
+
+    - step: &test-worker
+        name: Test Worker
+        caches: [maven]
+        services: [docker]
+        size: 2x
+        script:
+          - mvn -B clean verify -pl worker -am
+
+    - step: &test-web
+        name: Test Web
+        image: node:20
+        caches: [npm]
+        script:
+          - cd web-app
+          - npm ci
+          - npm test
+
+    - step: &test-mobile
+        name: Test Mobile (typecheck, lint, unit)
+        image: node:20
+        caches: [npm]
+        script:
+          - cd mobile-app
+          - npm ci
+          - npm run typecheck
+          - npm run lint
+          - npm test
+
+    - step: &build-api
+        name: Build & Push API Image
+        services: [docker]
+        script:
+          - export DOCKER_BUILDKIT=1
+          - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" "$REGISTRY"
+          - docker build -f Dockerfile.api -t "$REGISTRY/foundry-api:$BITBUCKET_COMMIT" .
+          - docker push "$REGISTRY/foundry-api:$BITBUCKET_COMMIT"
+
+    - step: &build-worker
+        name: Build & Push Worker Image
+        services: [docker]
+        script:
+          - export DOCKER_BUILDKIT=1
+          - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" "$REGISTRY"
+          - docker build -f Dockerfile.worker -t "$REGISTRY/foundry-worker:$BITBUCKET_COMMIT" .
+          - docker push "$REGISTRY/foundry-worker:$BITBUCKET_COMMIT"
+
+    - step: &build-web
+        name: Build Web (production bundle)
+        image: node:20
+        caches: [npm]
+        script:
+          - cd web-app
+          - npm ci
+          - export VITE_API_URL="$WEB_API_URL"
+          - export VITE_TURNSTILE_SITE_KEY="$TURNSTILE_SITE_KEY"
+          - npm run build
+        artifacts:
+          - web-app/build/**
+
+    - step: &deploy-staging
+        name: Deploy to Staging
+        image: alpine/helm:3.15.4
+        deployment: staging
+        script:
+          - echo "$KUBECONFIG" | base64 -d > kubeconfig.yml
+          - export KUBECONFIG=kubeconfig.yml
+          - helm upgrade --install foundry api-server/helm/foundry \
+              -f api-server/helm/foundry/values-staging.yaml \
+              --set image.repository="$REGISTRY/foundry-api" \
+              --set image.tag="$BITBUCKET_COMMIT" \
+              --set auth.jweSecretKey="$AUTH_JWE_SECRET_KEY" \
+              --set auth.jwtSecretKey="$AUTH_JWT_SECRET_KEY" \
+              --set turnstile.secretKey="$TURNSTILE_SECRET_KEY" \
+              --set firebase.webApiKey="$FIREBASE_WEB_API_KEY" \
+              --set postgresql.auth.username="$DB_USERNAME" \
+              --set postgresql.auth.password="$DB_PASSWORD" \
+              --set postgresql.auth.database="$DB_NAME" \
+              --namespace "$NAMESPACE" \
+              --wait --timeout 5m
+          - helm upgrade --install foundry-worker worker/helm/foundry-worker \
+              -f worker/helm/foundry-worker/values-staging.yaml \
+              --set image.repository="$REGISTRY/foundry-worker" \
+              --set image.tag="$BITBUCKET_COMMIT" \
+              --set openai.apiKey="$OPENAI_API_KEY" \
+              --set postgresql.auth.username="$DB_USERNAME" \
+              --set postgresql.auth.password="$DB_PASSWORD" \
+              --set postgresql.auth.database="$DB_NAME" \
+              --set postgresql.auth.host="foundry-postgresql" \
+              --namespace "$NAMESPACE" \
+              --wait --timeout 5m
+
+    - step: &deploy-prod
+        name: Deploy to Production
+        image: alpine/helm:3.15.4
+        deployment: production
+        trigger: manual
+        script:
+          - echo "$KUBECONFIG" | base64 -d > kubeconfig.yml
+          - export KUBECONFIG=kubeconfig.yml
+          - helm upgrade --install foundry api-server/helm/foundry \
+              -f api-server/helm/foundry/values-prod.yaml \
+              --set image.repository="$REGISTRY/foundry-api" \
+              --set image.tag="$BITBUCKET_COMMIT" \
+              --set auth.jweSecretKey="$AUTH_JWE_SECRET_KEY" \
+              --set auth.jwtSecretKey="$AUTH_JWT_SECRET_KEY" \
+              --set turnstile.secretKey="$TURNSTILE_SECRET_KEY" \
+              --set firebase.webApiKey="$FIREBASE_WEB_API_KEY" \
+              --set postgresql.auth.username="$DB_USERNAME" \
+              --set postgresql.auth.password="$DB_PASSWORD" \
+              --set postgresql.auth.database="$DB_NAME" \
+              --namespace "$NAMESPACE" \
+              --wait --timeout 5m
+          - helm upgrade --install foundry-worker worker/helm/foundry-worker \
+              -f worker/helm/foundry-worker/values-prod.yaml \
+              --set image.repository="$REGISTRY/foundry-worker" \
+              --set image.tag="$BITBUCKET_COMMIT" \
+              --set openai.apiKey="$OPENAI_API_KEY" \
+              --set postgresql.auth.username="$DB_USERNAME" \
+              --set postgresql.auth.password="$DB_PASSWORD" \
+              --set postgresql.auth.database="$DB_NAME" \
+              --set postgresql.auth.host="foundry-postgresql" \
+              --namespace "$NAMESPACE" \
+              --wait --timeout 5m
+
+    - step: &deploy-monitoring
+        name: Apply Monitoring Manifests
+        image: alpine/k8s:1.30.1
+        deployment: production
+        trigger: manual
+        script:
+          - echo "$KUBECONFIG" | base64 -d > kubeconfig.yml
+          - export KUBECONFIG=kubeconfig.yml
+          # Requires the Prometheus Operator (kube-prometheus-stack) to be installed
+          # with serviceMonitorSelector matching the `release: prometheus` label.
+          - kubectl apply -n "$NAMESPACE" -f monitoring/
+
+pipelines:
+  pull-requests:
+    '**':
+      - parallel:
+          - step: *test-api
+          - step: *test-worker
+          - step: *test-web
+          - step: *test-mobile
+
+  branches:
+    main:
+      - parallel:
+          - step: *test-api
+          - step: *test-worker
+          - step: *test-web
+          - step: *test-mobile
+      - parallel:
+          - step: *build-api
+          - step: *build-worker
+          - step: *build-web
+      - step: *deploy-staging
+      - step: *deploy-prod
+      - step: *deploy-monitoring

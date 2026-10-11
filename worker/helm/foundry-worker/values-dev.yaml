@@ -1,0 +1,18 @@
+# Development environment overrides
+
+replicaCount: 1
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+autoscaling:
+  enabled: false
+
+worker:
+  llm:
+    model: gpt-4.1-mini

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="/var/log/app"/>
+    <springProperty scope="context" name="LOG_FILE" source="logging.file.name" defaultValue="worker"/>
+
+    <!-- Rolling file appender with daily rotation, 7-day retention -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${LOG_FILE}.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%thread] [%X{jobId:-}] [%X{correlationId:-}] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Human-readable console for local/dev -->
+    <springProfile name="!prod">
+        <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr([%X{jobId:-}]){yellow} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- JSON console for production (K8s log aggregation) -->
+    <springProfile name="prod">
+        <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <includeMdcKeyName>rid</includeMdcKeyName>
+                <includeMdcKeyName>correlationId</includeMdcKeyName>
+                <includeMdcKeyName>jobId</includeMdcKeyName>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="JSON"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+</configuration>

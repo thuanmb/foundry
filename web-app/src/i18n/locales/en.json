@@ -1,0 +1,116 @@
+{
+    "app": {
+        "name": "Foundry",
+        "tagline": "Production-ready starter",
+        "description": "Foundry — a production-ready full-stack starter: Spring Boot API, async worker, React web and Expo mobile."
+    },
+    "nav": {
+        "main": "Main navigation",
+        "home": "Home",
+        "language": "Language",
+        "toggleTheme": "Toggle light/dark theme",
+        "themeLight": "Light",
+        "themeDark": "Dark",
+        "skipToContent": "Skip to main content"
+    },
+    "footer": {
+        "copyright": "© {{year}} {{name}}. All rights reserved.",
+        "builtWith": "Built with React, Vite and Tailwind CSS"
+    },
+    "errors": {
+        "boundaryTitle": "Something went wrong",
+        "boundaryMessage": "An unexpected error occurred. Please try again later.",
+        "backHome": "Back to home",
+        "TURNSTILE_NOT_LOADED": "Security check failed to load. Please reload the page.",
+        "TURNSTILE_FAILED": "Security check failed. Please try again.",
+        "TURNSTILE_EXPIRED": "Security check expired. Please try again."
+    },
+    "home": {
+        "hero": {
+            "title": "Foundry — production-ready starter",
+            "subtitle": "A clean full-stack foundation for your next product: API, worker, web and mobile wired together."
+        },
+        "included": {
+            "title": "What's included",
+            "items": {
+                "api": {
+                    "title": "Spring Boot API",
+                    "description": "Java 21, REST, RFC 7807, Flyway"
+                },
+                "worker": {
+                    "title": "Worker",
+                    "description": "Separate async job processor"
+                },
+                "web": {
+                    "title": "React web",
+                    "description": "Vite, Tailwind CSS, Redux Toolkit"
+                },
+                "mobile": {
+                    "title": "Expo mobile",
+                    "description": "React Native with Expo Router"
+                },
+                "jobs": {
+                    "title": "Postgres async jobs",
+                    "description": "Queue, status tracking and SSE"
+                },
+                "auth": {
+                    "title": "JWT/JWE auth",
+                    "description": "Anonymous and authenticated sessions"
+                },
+                "i18n": {
+                    "title": "i18n",
+                    "description": "Vietnamese and English via react-i18next"
+                }
+            }
+        },
+        "demo": {
+            "title": "Echo job demo",
+            "description": "Send a message to the worker and watch its progress in real time.",
+            "disabled": "The echo feature is currently disabled.",
+            "verifyPrompt": "Verify you are human to get an anonymous session.",
+            "verify": "Start session",
+            "verifying": "Verifying...",
+            "messageLabel": "Message",
+            "messagePlaceholder": "Type anything...",
+            "delayLabel": "Processing delay",
+            "delayOption_one": "{{count}} second",
+            "delayOption_other": "{{count}} seconds",
+            "submit": "Submit job",
+            "submitting": "Submitting...",
+            "errors": {
+                "messageRequired": "Please enter a message.",
+                "messageTooLong": "Message must be at most {{max}} characters."
+            }
+        }
+    },
+    "job": {
+        "title": "Job result",
+        "id": "Job ID",
+        "loading": "Loading...",
+        "loadError": "Could not load job",
+        "timeline": "Progress",
+        "estimatedWait_one": "Estimated wait: {{count}} second",
+        "estimatedWait_other": "Estimated wait: {{count}} seconds",
+        "status": {
+            "PENDING": "Pending",
+            "RUNNING": "Running",
+            "COMPLETED": "Completed",
+            "FAILED": "Failed"
+        },
+        "result": "Result",
+        "fields": {
+            "echo": "Echo",
+            "length": "Length",
+            "processedAt": "Processed at",
+            "llmReply": "LLM reply"
+        },
+        "failedTitle": "Job failed",
+        "failedFallback": "An error occurred while processing the job.",
+        "runAnother": "Run another"
+    },
+    "notFound": {
+        "title": "Page not found",
+        "message": "The page you are looking for does not exist or has been moved.",
+        "backHome": "Back to home"
+    }
+}

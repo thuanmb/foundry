@@ -1,0 +1,174 @@
+{
+    "common": {
+        "appName": "Foundry",
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "retry": "Retry",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "delete": "Delete",
+        "back": "Back",
+        "close": "Close",
+        "ok": "OK"
+    },
+    "tabs": {
+        "home": "Home",
+        "notes": "Notes",
+        "account": "Account"
+    },
+    "auth": {
+        "phoneInputTitle": "Sign in",
+        "welcome": "Welcome",
+        "phoneSubtitle": "Enter your phone number to sign in or create a new account.",
+        "phoneLabel": "Phone number",
+        "continue": "Continue",
+        "termsNotice": "By continuing, you agree to the Terms & Privacy Policy.",
+        "otpTitle": "OTP verification",
+        "otpSubtitle": "Enter verification code",
+        "otpSentTo": "OTP sent to {{phone}}",
+        "verifying": "Verifying...",
+        "noCode": "Didn't receive the code?",
+        "resendIn": "Resend code ({{seconds}}s)",
+        "resendAvailable": "Resend code",
+        "invalidPhone": "Invalid phone number",
+        "invalidOtp": "Incorrect OTP code",
+        "otpExpired": "OTP code has expired",
+        "tooManyAttempts": "Too many attempts. Please request a new code.",
+        "rateLimited": "Too many code requests. Please try again later.",
+        "sendOtpError": "Could not send OTP. Please try again.",
+        "loginSuccess": "Signed in successfully"
+    },
+    "home": {
+        "title": "Home",
+        "welcomeTitle": "Welcome to Foundry",
+        "welcomeBody": "This is a starter project with auth, feature flags, async jobs and CRUD. Replace this screen with your own features.",
+        "echo": {
+            "title": "Echo job demo",
+            "description": "Send a message to the worker. The result is pushed back via SSE (or polling when SSE is unavailable).",
+            "messageLabel": "Message",
+            "messagePlaceholder": "Type anything...",
+            "delayLabel": "Processing delay",
+            "delaySeconds": "{{count}}s",
+            "charCount": "{{count}}/{{max}}",
+            "submit": "Submit job",
+            "disabled": "The Echo feature is disabled."
+        }
+    },
+    "job": {
+        "title": "Job",
+        "jobId": "Job ID: {{id}}",
+        "estimatedWait": "Estimated wait: {{seconds}}s",
+        "status": {
+            "PENDING": "Pending",
+            "RUNNING": "Running",
+            "COMPLETED": "Completed",
+            "FAILED": "Failed"
+        },
+        "result": {
+            "title": "Result",
+            "echo": "Echo",
+            "length": "Length",
+            "processedAt": "Processed at",
+            "llmReply": "AI reply"
+        },
+        "errorTitle": "Job failed",
+        "newJob": "Submit another job"
+    },
+    "notes": {
+        "title": "Notes",
+        "empty": "No notes yet. Create your first one!",
+        "loginRequired": "Sign in to create and sync your notes.",
+        "loginCta": "Sign in",
+        "newNote": "New note",
+        "editNote": "Edit note",
+        "titleLabel": "Title",
+        "titlePlaceholder": "Enter a title",
+        "contentLabel": "Content",
+        "contentPlaceholder": "Write something...",
+        "titleRequired": "Please enter a title",
+        "updatedAt": "Updated {{date}}",
+        "disabled": "The Notes feature is disabled.",
+        "deleteConfirm": {
+            "title": "Delete note",
+            "message": "Are you sure you want to delete this note?"
+        }
+    },
+    "account": {
+        "title": "Account",
+        "guest": "Guest",
+        "registerPrompt": "Create an account to save notes and sync across devices.",
+        "registerNow": "Sign up",
+        "loginPrompt": "Already have an account?",
+        "loginNow": "Sign in",
+        "version": "Version {{version}}",
+        "menu": {
+            "editProfile": "Edit profile",
+            "language": "Language: {{language}}",
+            "privacy": "Privacy policy",
+            "logout": "Sign out",
+            "deleteAccount": "Delete account"
+        },
+        "languageName": {
+            "vi": "Tiếng Việt",
+            "en": "English"
+        },
+        "logoutConfirm": {
+            "title": "Sign out",
+            "message": "Are you sure you want to sign out?",
+            "confirm": "Sign out"
+        },
+        "deleteConfirm": {
+            "title": "Delete account",
+            "message": "Your account and all of its data will be permanently deleted. Are you sure?",
+            "confirm": "Delete permanently",
+            "success": "Your account has been deleted."
+        },
+        "deleteFlow": {
+            "title": "Confirm account deletion",
+            "instructions": "Enter the OTP sent to {{phone}} to confirm deleting your account."
+        },
+        "editProfile": {
+            "title": "Edit profile",
+            "displayNameLabel": "Display name",
+            "displayNamePlaceholder": "Enter a display name",
+            "required": "Please enter a display name",
+            "successTitle": "Updated",
+            "successMessage": "Your profile has been updated."
+        },
+        "privacy": {
+            "title": "Privacy policy",
+            "lastUpdated": "Last updated: [date]",
+            "intro": "This is placeholder content. Replace it with your app's real privacy policy before release.",
+            "sections": {
+                "collection": {
+                    "title": "1. Data we collect",
+                    "body": "Describe the data the app collects (e.g. phone number, user-generated content)."
+                },
+                "usage": {
+                    "title": "2. How we use data",
+                    "body": "Describe how data is used to provide and improve the service."
+                },
+                "storage": {
+                    "title": "3. Storage & security",
+                    "body": "Describe where data is stored and how it is protected."
+                },
+                "rights": {
+                    "title": "4. Your rights",
+                    "body": "Users can view, edit or delete their account and data at any time from within the app."
+                },
+                "contact": {
+                    "title": "5. Contact",
+                    "body": "Provide contact details for privacy questions."
+                }
+            }
+        }
+    },
+    "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "network": "No network connection",
+        "unauthorized": "Your session has expired. Please sign in again.",
+        "notFound": "Not found",
+        "featureDisabled": "This feature is currently unavailable"
+    }
+}

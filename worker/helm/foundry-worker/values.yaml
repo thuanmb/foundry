@@ -1,0 +1,58 @@
+replicaCount: 1
+
+image:
+  repository: foundry-worker
+  tag: 0.1.0
+  pullPolicy: IfNotPresent
+
+service:
+  name: foundry-worker
+  port: 8081
+
+postgresql:
+  auth:
+    host: ""
+    username: ""
+    password: ""
+    database: ""
+
+openai:
+  apiKey: ""
+  baseUrl: https://api.openai.com/v1
+
+worker:
+  job:
+    maxRetries: 3
+    heartbeatIntervalSec: 30
+    staleTimeoutMinutes: 5
+    staleCheckIntervalSec: 60
+    gracefulShutdownThresholdSec: 10
+  listen:
+    channel: new_job
+    completeChannel: job_completed
+    fallbackPollSec: 30
+  llm:
+    model: gpt-4.1-mini
+    timeoutSec: 120
+    maxTokens: 1000
+    temperature: 0.7
+  echo:
+    # Set true (and provide openai.apiKey) to append an LLM reply to echo results
+    llmEnabled: false
+    maxDelaySec: 30
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+terminationGracePeriodSeconds: 45
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPU: 80

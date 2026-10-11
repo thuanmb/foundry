@@ -1,0 +1,114 @@
+{
+    "app": {
+        "name": "Foundry",
+        "tagline": "Bộ khởi tạo sẵn sàng cho production",
+        "description": "Foundry — bộ khởi tạo full-stack sẵn sàng cho production: Spring Boot API, worker bất đồng bộ, web React và ứng dụng Expo."
+    },
+    "nav": {
+        "main": "Điều hướng chính",
+        "home": "Trang chủ",
+        "language": "Ngôn ngữ",
+        "toggleTheme": "Chuyển giao diện sáng/tối",
+        "themeLight": "Sáng",
+        "themeDark": "Tối",
+        "skipToContent": "Bỏ qua đến nội dung chính"
+    },
+    "footer": {
+        "copyright": "© {{year}} {{name}}. Bảo lưu mọi quyền.",
+        "builtWith": "Xây dựng với React, Vite và Tailwind CSS"
+    },
+    "errors": {
+        "boundaryTitle": "Đã xảy ra lỗi",
+        "boundaryMessage": "Có lỗi không mong muốn. Vui lòng thử lại sau.",
+        "backHome": "Về trang chủ",
+        "TURNSTILE_NOT_LOADED": "Không tải được xác minh bảo mật. Vui lòng tải lại trang.",
+        "TURNSTILE_FAILED": "Xác minh bảo mật thất bại. Vui lòng thử lại.",
+        "TURNSTILE_EXPIRED": "Xác minh bảo mật đã hết hạn. Vui lòng thử lại."
+    },
+    "home": {
+        "hero": {
+            "title": "Foundry — bộ khởi tạo sẵn sàng cho production",
+            "subtitle": "Nền tảng full-stack gọn gàng để bắt đầu sản phẩm tiếp theo: API, worker, web và mobile được kết nối sẵn."
+        },
+        "included": {
+            "title": "Bao gồm",
+            "items": {
+                "api": {
+                    "title": "Spring Boot API",
+                    "description": "Java 21, REST, RFC 7807, Flyway"
+                },
+                "worker": {
+                    "title": "Worker",
+                    "description": "Xử lý tác vụ bất đồng bộ tách biệt"
+                },
+                "web": {
+                    "title": "Web React",
+                    "description": "Vite, Tailwind CSS, Redux Toolkit"
+                },
+                "mobile": {
+                    "title": "Mobile Expo",
+                    "description": "React Native với Expo Router"
+                },
+                "jobs": {
+                    "title": "Tác vụ bất đồng bộ trên Postgres",
+                    "description": "Hàng đợi, trạng thái và SSE"
+                },
+                "auth": {
+                    "title": "Xác thực JWT/JWE",
+                    "description": "Phiên ẩn danh và người dùng đã đăng nhập"
+                },
+                "i18n": {
+                    "title": "Đa ngôn ngữ",
+                    "description": "Tiếng Việt và tiếng Anh với react-i18next"
+                }
+            }
+        },
+        "demo": {
+            "title": "Demo tác vụ Echo",
+            "description": "Gửi một tin nhắn tới worker và theo dõi tiến trình theo thời gian thực.",
+            "disabled": "Tính năng Echo hiện đang tắt.",
+            "verifyPrompt": "Xác minh bạn không phải robot để nhận phiên ẩn danh.",
+            "verify": "Bắt đầu phiên",
+            "verifying": "Đang xác minh...",
+            "messageLabel": "Tin nhắn",
+            "messagePlaceholder": "Nhập nội dung bất kỳ...",
+            "delayLabel": "Độ trễ xử lý",
+            "delayOption_other": "{{count}} giây",
+            "submit": "Gửi tác vụ",
+            "submitting": "Đang gửi...",
+            "errors": {
+                "messageRequired": "Vui lòng nhập tin nhắn.",
+                "messageTooLong": "Tin nhắn tối đa {{max}} ký tự."
+            }
+        }
+    },
+    "job": {
+        "title": "Kết quả tác vụ",
+        "id": "Mã tác vụ",
+        "loading": "Đang tải...",
+        "loadError": "Không thể tải tác vụ",
+        "timeline": "Tiến trình",
+        "estimatedWait_other": "Thời gian chờ ước tính: {{count}} giây",
+        "status": {
+            "PENDING": "Đang chờ",
+            "RUNNING": "Đang xử lý",
+            "COMPLETED": "Hoàn tất",
+            "FAILED": "Thất bại"
+        },
+        "result": "Kết quả",
+        "fields": {
+            "echo": "Echo",
+            "length": "Độ dài",
+            "processedAt": "Xử lý lúc",
+            "llmReply": "Phản hồi LLM"
+        },
+        "failedTitle": "Tác vụ thất bại",
+        "failedFallback": "Đã xảy ra lỗi khi xử lý tác vụ.",
+        "runAnother": "Chạy tác vụ khác"
+    },
+    "notFound": {
+        "title": "Không tìm thấy trang",
+        "message": "Trang bạn tìm không tồn tại hoặc đã bị di chuyển.",
+        "backHome": "Về trang chủ"
+    }
+}

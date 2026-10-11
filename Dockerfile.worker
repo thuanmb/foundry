@@ -1,0 +1,34 @@
+# Multi-module Dockerfile for worker
+# Build context: project root
+# Requires BuildKit: DOCKER_BUILDKIT=1 docker build ...
+
+# Stage 1: Build common + worker
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+
+COPY pom.xml .
+COPY common/pom.xml common/
+COPY api-server/pom.xml api-server/
+COPY worker/pom.xml worker/
+
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn dependency:go-offline -pl common,worker
+
+COPY common/src common/src/
+COPY worker/src worker/src/
+
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn clean package -pl common,worker -DskipTests
+
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jdk
+
+RUN mkdir -p /etc/opt/foundry/config
+
+WORKDIR /app
+
+COPY --from=build /app/worker/target/*.jar app.jar
+
+EXPOSE 8081
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

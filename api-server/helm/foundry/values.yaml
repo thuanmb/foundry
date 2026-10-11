@@ -1,0 +1,159 @@
+replicaCount: 1
+
+image:
+  repository: foundry-api
+  tag: 0.1.0
+  pullPolicy: IfNotPresent
+
+# JVM heap size (should be ~75% of container memory limit)
+javaOpts: "-Xmx768m"
+
+# Spring profiles to activate ("prod" disables SQL logging and locks CORS origins)
+springProfilesActive: ""
+
+service:
+  name: foundry-server
+  port: 8080
+  nodePort: 32345
+  type: NodePort
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+# Secrets — pass via --set or a sealed/external secret, never commit real values
+auth:
+  jweSecretKey: ""
+  jwtSecretKey: ""
+
+turnstile:
+  secretKey: ""
+
+firebase:
+  webApiKey: ""
+
+twilio:
+  accountSid: ""
+  authToken: ""
+  fromNumber: ""
+
+attestation:
+  iosAppId: "TEAMID.com.thuanbui.foundry"
+  iosEnvironment: "development"
+  androidPackageName: "com.thuanbui.foundry"
+  androidDecryptionKey: ""
+  androidVerificationKey: ""
+
+ingress:
+  enabled: false
+  host: api.foundry.local
+  tls: false
+  tlsSecretName: ""
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPU: 70
+
+# Non-secret application config, rendered into application-override.properties
+config:
+  auth:
+    accessToken:
+      ttlMinutes: 60
+      issuer: foundry
+    refreshToken:
+      ttlDays: 30
+      maxPerUser: 5
+    otp:
+      length: 6
+      expiryMinutes: 5
+      maxAttempts: 5
+      rateLimitPerHour: 3
+      cooldownSec: 60
+    jwe:
+      ttlHours: 24
+      algorithm: A256GCM
+  turnstile:
+    verifyUrl: "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+    timeoutSec: 5
+  sms:
+    # "twilio" sends real SMS (requires twilio.* secrets); anything else logs OTPs (dev only)
+    provider: noop
+  attestation:
+    bypassEnabled: false
+  worker:
+    job:
+      maxRetries: 3
+      heartbeatIntervalSec: 30
+      staleTimeoutMinutes: 5
+      staleCheckIntervalSec: 60
+      gracefulShutdownThresholdSec: 10
+    listen:
+      channel: new_job
+      completeChannel: job_completed
+      fallbackPollSec: 30
+  cache:
+    caffeine:
+      featuresTtlSec: 30
+      mobileConfigTtlSec: 30
+      maxEntries: 1000
+  security:
+    rateLimit:
+      publicEndpointsPerSec: 10
+      authEndpointsPerMin: 20
+    request:
+      maxBodySizeMb: 10
+    cors:
+      allowedOrigins: "*"
+      maxAgeSec: 3600
+  sse:
+    heartbeatIntervalSec: 15
+    connectionTimeoutSec: 300
+  polling:
+    initialDelaySec: 2
+    maxDelaySec: 15
+    backoffMultiplier: 2.0
+  # Rendered as feature.flags.<key>.enabled; add a key here to introduce a new flag
+  featureFlags:
+    notes:
+      enabled: true
+    echo:
+      enabled: true
+    anonymousWeb:
+      enabled: true
+  account:
+    deletion:
+      gracePeriodDays: 30
+      anonymizeOnDelete: true
+    retention:
+      inactiveDays: 365
+  app:
+    mobile:
+      minVersion: "1.0.0"
+      latestVersion: "1.0.0"
+
+postgresql:
+  enabled: true
+  auth:
+    host: ""
+    username: ""
+    password: ""
+    database: ""
+
+  primary:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: "standard"
+
+  metrics:
+    enabled: false

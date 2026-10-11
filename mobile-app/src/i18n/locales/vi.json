@@ -1,0 +1,174 @@
+{
+    "common": {
+        "appName": "Foundry",
+        "loading": "Đang tải...",
+        "error": "Đã xảy ra lỗi",
+        "retry": "Thử lại",
+        "cancel": "Huỷ",
+        "confirm": "Xác nhận",
+        "save": "Lưu",
+        "delete": "Xoá",
+        "back": "Quay lại",
+        "close": "Đóng",
+        "ok": "OK"
+    },
+    "tabs": {
+        "home": "Trang chủ",
+        "notes": "Ghi chú",
+        "account": "Tài khoản"
+    },
+    "auth": {
+        "phoneInputTitle": "Đăng nhập",
+        "welcome": "Chào mừng bạn",
+        "phoneSubtitle": "Nhập số điện thoại để đăng nhập hoặc tạo tài khoản mới.",
+        "phoneLabel": "Số điện thoại",
+        "continue": "Tiếp tục",
+        "termsNotice": "Bằng cách tiếp tục, bạn đồng ý với Điều khoản & Chính sách bảo mật.",
+        "otpTitle": "Xác thực OTP",
+        "otpSubtitle": "Nhập mã xác thực",
+        "otpSentTo": "Mã OTP đã gửi đến {{phone}}",
+        "verifying": "Đang xác thực...",
+        "noCode": "Không nhận được mã?",
+        "resendIn": "Gửi lại mã ({{seconds}}s)",
+        "resendAvailable": "Gửi lại mã",
+        "invalidPhone": "Số điện thoại không hợp lệ",
+        "invalidOtp": "Mã OTP không đúng",
+        "otpExpired": "Mã OTP đã hết hạn",
+        "tooManyAttempts": "Quá nhiều lần thử. Vui lòng yêu cầu mã mới.",
+        "rateLimited": "Bạn đã yêu cầu quá nhiều mã. Vui lòng thử lại sau.",
+        "sendOtpError": "Không thể gửi mã OTP. Vui lòng thử lại.",
+        "loginSuccess": "Đăng nhập thành công"
+    },
+    "home": {
+        "title": "Trang chủ",
+        "welcomeTitle": "Chào mừng đến với Foundry",
+        "welcomeBody": "Đây là dự án mẫu với xác thực, cờ tính năng, tác vụ bất đồng bộ và CRUD. Hãy thay thế màn hình này bằng tính năng của bạn.",
+        "echo": {
+            "title": "Demo tác vụ Echo",
+            "description": "Gửi một tin nhắn tới worker. Kết quả được đẩy về qua SSE (hoặc polling khi SSE không khả dụng).",
+            "messageLabel": "Tin nhắn",
+            "messagePlaceholder": "Nhập nội dung bất kỳ...",
+            "delayLabel": "Độ trễ xử lý",
+            "delaySeconds": "{{count}} giây",
+            "charCount": "{{count}}/{{max}}",
+            "submit": "Gửi tác vụ",
+            "disabled": "Tính năng Echo đang tắt."
+        }
+    },
+    "job": {
+        "title": "Tác vụ",
+        "jobId": "Mã tác vụ: {{id}}",
+        "estimatedWait": "Thời gian chờ ước tính: {{seconds}} giây",
+        "status": {
+            "PENDING": "Đang chờ",
+            "RUNNING": "Đang xử lý",
+            "COMPLETED": "Hoàn tất",
+            "FAILED": "Thất bại"
+        },
+        "result": {
+            "title": "Kết quả",
+            "echo": "Phản hồi",
+            "length": "Độ dài",
+            "processedAt": "Xử lý lúc",
+            "llmReply": "Trả lời từ AI"
+        },
+        "errorTitle": "Tác vụ thất bại",
+        "newJob": "Gửi tác vụ khác"
+    },
+    "notes": {
+        "title": "Ghi chú",
+        "empty": "Chưa có ghi chú nào. Hãy tạo ghi chú đầu tiên!",
+        "loginRequired": "Đăng nhập để tạo và đồng bộ ghi chú của bạn.",
+        "loginCta": "Đăng nhập",
+        "newNote": "Ghi chú mới",
+        "editNote": "Sửa ghi chú",
+        "titleLabel": "Tiêu đề",
+        "titlePlaceholder": "Nhập tiêu đề",
+        "contentLabel": "Nội dung",
+        "contentPlaceholder": "Viết gì đó...",
+        "titleRequired": "Vui lòng nhập tiêu đề",
+        "updatedAt": "Cập nhật {{date}}",
+        "disabled": "Tính năng Ghi chú đang tắt.",
+        "deleteConfirm": {
+            "title": "Xoá ghi chú",
+            "message": "Bạn có chắc muốn xoá ghi chú này?"
+        }
+    },
+    "account": {
+        "title": "Tài khoản",
+        "guest": "Khách",
+        "registerPrompt": "Tạo tài khoản để lưu ghi chú và đồng bộ giữa các thiết bị.",
+        "registerNow": "Đăng ký",
+        "loginPrompt": "Đã có tài khoản?",
+        "loginNow": "Đăng nhập",
+        "version": "Phiên bản {{version}}",
+        "menu": {
+            "editProfile": "Chỉnh sửa hồ sơ",
+            "language": "Ngôn ngữ: {{language}}",
+            "privacy": "Chính sách bảo mật",
+            "logout": "Đăng xuất",
+            "deleteAccount": "Xoá tài khoản"
+        },
+        "languageName": {
+            "vi": "Tiếng Việt",
+            "en": "English"
+        },
+        "logoutConfirm": {
+            "title": "Đăng xuất",
+            "message": "Bạn có chắc chắn muốn đăng xuất?",
+            "confirm": "Đăng xuất"
+        },
+        "deleteConfirm": {
+            "title": "Xoá tài khoản",
+            "message": "Tài khoản và toàn bộ dữ liệu của bạn sẽ bị xoá vĩnh viễn. Bạn có chắc chắn?",
+            "confirm": "Xoá vĩnh viễn",
+            "success": "Tài khoản của bạn đã được xoá."
+        },
+        "deleteFlow": {
+            "title": "Xác nhận xoá tài khoản",
+            "instructions": "Nhập mã OTP đã gửi đến {{phone}} để xác nhận xoá tài khoản."
+        },
+        "editProfile": {
+            "title": "Chỉnh sửa hồ sơ",
+            "displayNameLabel": "Tên hiển thị",
+            "displayNamePlaceholder": "Nhập tên hiển thị",
+            "required": "Vui lòng nhập tên hiển thị",
+            "successTitle": "Đã cập nhật",
+            "successMessage": "Hồ sơ của bạn đã được cập nhật."
+        },
+        "privacy": {
+            "title": "Chính sách bảo mật",
+            "lastUpdated": "Cập nhật lần cuối: [ngày]",
+            "intro": "Đây là nội dung mẫu. Thay thế bằng chính sách bảo mật thực tế của ứng dụng trước khi phát hành.",
+            "sections": {
+                "collection": {
+                    "title": "1. Dữ liệu thu thập",
+                    "body": "Mô tả các loại dữ liệu ứng dụng thu thập (ví dụ: số điện thoại, nội dung do người dùng tạo)."
+                },
+                "usage": {
+                    "title": "2. Mục đích sử dụng",
+                    "body": "Mô tả cách dữ liệu được sử dụng để cung cấp và cải thiện dịch vụ."
+                },
+                "storage": {
+                    "title": "3. Lưu trữ & bảo mật",
+                    "body": "Mô tả nơi lưu trữ dữ liệu và các biện pháp bảo vệ."
+                },
+                "rights": {
+                    "title": "4. Quyền của người dùng",
+                    "body": "Người dùng có thể xem, chỉnh sửa hoặc xoá tài khoản và dữ liệu bất kỳ lúc nào trong ứng dụng."
+                },
+                "contact": {
+                    "title": "5. Liên hệ",
+                    "body": "Cung cấp thông tin liên hệ cho các câu hỏi về quyền riêng tư."
+                }
+            }
+        }
+    },
+    "errors": {
+        "generic": "Đã xảy ra lỗi. Vui lòng thử lại.",
+        "network": "Không có kết nối mạng",
+        "unauthorized": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+        "notFound": "Không tìm thấy dữ liệu",
+        "featureDisabled": "Tính năng này hiện không khả dụng"
+    }
+}

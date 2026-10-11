@@ -1,0 +1,10 @@
+diff --git a/node_modules/expo-modules-jsi/apple/Package.swift b/node_modules/expo-modules-jsi/apple/Package.swift
+index 5798eaf..53929b6 100644
+--- a/node_modules/expo-modules-jsi/apple/Package.swift
++++ b/node_modules/expo-modules-jsi/apple/Package.swift
+@@ -1,4 +1,4 @@
+-// swift-tools-version: 6.2
++// swift-tools-version: 6.1
+ // The swift-tools-version declares the minimum version of Swift required to build this package.
+ 
+ import Foundation
