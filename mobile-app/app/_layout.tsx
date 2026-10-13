@@ -11,7 +11,6 @@ import { useDeviceAttestation } from '@/hooks/useDeviceAttestation';
 import { fetchConfig } from '@/redux/slices/configSlice';
 import { loadSavedLanguage } from '@/i18n';
 import { colors } from '@/theme';
-import '@/i18n';
 
 SplashScreen.preventAutoHideAsync();
 

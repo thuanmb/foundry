@@ -2,9 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react-native';
 import PhoneInput from '../PhoneInput';
 
+const mockPush = jest.fn();
+
 jest.mock('expo-router', () => ({
     useRouter: () => ({
-        push: jest.fn(),
+        push: mockPush,
         replace: jest.fn(),
         back: jest.fn(),
     }),
@@ -67,12 +69,7 @@ describe('PhoneInput', () => {
     });
 
     it('navigates to privacy policy when terms notice is tapped', async () => {
-        const mockPush = jest.fn();
-        jest.spyOn(require('expo-router'), 'useRouter').mockReturnValue({
-            push: mockPush,
-            replace: jest.fn(),
-            back: jest.fn(),
-        });
+        mockPush.mockClear();
 
         await render(<PhoneInput onSubmit={jest.fn()} submitting={false} />);
         const termsLink = screen.getByText('By continuing, you agree.');

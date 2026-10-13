@@ -51,6 +51,9 @@ export function useDeviceAttestation() {
     }, [dispatch]);
 
     useEffect(() => {
+        // Attestation runs once on mount; every setState happens after `await`,
+        // so this is async initialization, not a synchronous cascade.
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- setState runs after await
         runAttestation();
     }, [runAttestation]);
 
